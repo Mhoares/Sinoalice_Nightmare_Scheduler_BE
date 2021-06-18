@@ -11,7 +11,7 @@ const NightmaresUrl = "https://sinoalice.game-db.tw/package/alice_nightmares_glo
 
 type SinoaliceDBService struct {}
 
-func ( sdb *SinoaliceDBService) GetNightmares() ([]*Nightmare, error) {
+func ( sdb *SinoaliceDBService) GetNightmares( v string) ([]*Nightmare, error) {
 	var (
 		tmp []*Nightmare
 		result struct{
@@ -21,7 +21,7 @@ func ( sdb *SinoaliceDBService) GetNightmares() ([]*Nightmare, error) {
 	)
 
 	params := url.Values{}
-	params.Set("v", "1528")
+	params.Set("v", v)
 	resp, errResp := http.Get(NightmaresUrl + params.Encode())
 	defer resp.Body.Close()
 	if errResp != nil {
