@@ -13,6 +13,7 @@ const (
 	GvgSkillEN = "GvgSkillEN"
 	GvgSkillDur = "GvgSkillDur"
 	GvgSkillLead = "GvgSkillLead"
+	GvgSkillSP ="GvgSkillSP"
 
 )
 
@@ -25,6 +26,7 @@ type Nightmare struct {
 	GvgSkillEN string	`bson:"gvg_skill_en,omitempty"`
 	GvgSkillDur int	`bson:"gvg_skill_dur,omitempty"`
 	GvgSkillLead int	`bson:"gvg_skill_lead,omitempty"`
+	GvgSkillSP int `bson:"gvg_skill_sp,omitempty"`
 }
 func(n *Nightmare) Init(columns []string, row []string){
 	n.ID, _ = strconv.Atoi(row[n.indexOf(ID, columns)])
@@ -35,6 +37,7 @@ func(n *Nightmare) Init(columns []string, row []string){
 	n.GvgSkillEN = row[n.indexOf(GvgSkillEN,columns)]
 	n.GvgSkillDur, _ =   strconv.Atoi( row[n.indexOf(GvgSkillDur,columns)])
 	n.GvgSkillLead, _ =   strconv.Atoi( row[n.indexOf(GvgSkillLead,columns)])
+	n.GvgSkillSP, _ =  strconv.Atoi( row[n.indexOf(GvgSkillSP,columns)])
 }
 func(n *Nightmare) indexOf( column string, columns []string) int{
 	for i, c := range columns{

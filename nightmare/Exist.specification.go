@@ -15,11 +15,9 @@ func (es *ExistSpecification) isSatisfiedBy(nightmare *Nightmare) bool  {
 	nm , err := es.Repo.GetNightmare(nightmare)
 
 	if err != nil {
-		println(err.Error())
 		return false
 	}
 	if nm.NameEN == ""{
-		println("falso")
 		return false
 	}
 
