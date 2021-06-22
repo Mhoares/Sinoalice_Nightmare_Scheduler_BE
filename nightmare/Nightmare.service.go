@@ -3,15 +3,25 @@ package nightmare
 import (
 	"github.com/Mhoares/Sinoalice_Nightmare_Scheduler_BE/auth"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"net/http"
 )
 
+var Origin ="*"
 type Service struct {
 	Repo 	Repository
 	SinoDB *SinoaliceDBService
 	Auth   *auth.Service
 }
 
+func init() {
+	viper.SetConfigFile("config.json")
+	if err := viper.ReadInConfig(); err != nil{
+		println(err.Error())
+	}
+	Origin = viper.Get("ORIGIN").(string)
+	println(Origin)
+}
 func (sn *Service) Init( r Repository, sdb *SinoaliceDBService, a *auth.Service)  {
 	sn.Auth = a
 	sn.SinoDB  = sdb
@@ -24,6 +34,7 @@ func (sn *Service) GetNightmares() func(ctx *gin.Context) {
 		if err != nil {
 			httpStatus = http.StatusInternalServerError
 		}
+		ctx.Writer.Header().Set("Access-Control-Allow-Origin", Origin)
 		ctx.JSON(httpStatus,nms)
 	}
 }
@@ -62,6 +73,7 @@ func (sn *Service) UpdateNightmares() func(ctx *gin.Context) {
 			ctx.JSON(httpStatus, err.Error())
 			return
 		}
+		ctx.Writer.Header().Set("Access-Control-Allow-Origin", Origin)
 		ctx.JSON(httpStatus, struct{}{})
 
 	}
