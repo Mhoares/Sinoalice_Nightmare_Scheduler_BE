@@ -14,7 +14,7 @@ const (
 	GvgSkillDur = "GvgSkillDur"
 	GvgSkillLead = "GvgSkillLead"
 	GvgSkillSP ="GvgSkillSP"
-
+	Global ="Global"
 )
 
 type Nightmare struct {
@@ -27,6 +27,7 @@ type Nightmare struct {
 	GvgSkillDur int	`bson:"gvg_skill_dur,omitempty"`
 	GvgSkillLead int	`bson:"gvg_skill_lead,omitempty"`
 	GvgSkillSP int `bson:"gvg_skill_sp,omitempty"`
+	Global bool `bson:"global,omitempty"`
 }
 func(n *Nightmare) Init(columns []string, row []string){
 	n.ID, _ = strconv.Atoi(row[n.indexOf(ID, columns)])
@@ -38,6 +39,8 @@ func(n *Nightmare) Init(columns []string, row []string){
 	n.GvgSkillDur, _ =   strconv.Atoi( row[n.indexOf(GvgSkillDur,columns)])
 	n.GvgSkillLead, _ =   strconv.Atoi( row[n.indexOf(GvgSkillLead,columns)])
 	n.GvgSkillSP, _ =  strconv.Atoi( row[n.indexOf(GvgSkillSP,columns)])
+	g, _:= strconv.Atoi( row[n.indexOf(Global,columns)])
+	n.Global = n.IsGlobal(g)
 }
 func(n *Nightmare) indexOf( column string, columns []string) int{
 	for i, c := range columns{
@@ -46,4 +49,10 @@ func(n *Nightmare) indexOf( column string, columns []string) int{
 		}
 	}
 	return -1
+}
+func (n Nightmare) IsGlobal(g int) bool {
+	if g > 0 {
+		return true
+	}
+	return false
 }
