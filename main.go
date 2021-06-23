@@ -28,7 +28,8 @@ func main() {
     sinoDB := new(nightmare.SinoaliceDBService)
     ns := new(nightmare.Service)
     ns.Init(nightmare.Mongo,sinoDB,auth)
-    r := gin.Default()
+    gin.SetMode(gin.ReleaseMode)
+    r := gin.New()
     nightmares := r.Group("/nightmares")
     {
         nightmares.GET("", ns.GetNightmares())
