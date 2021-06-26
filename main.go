@@ -4,6 +4,7 @@ import (
     "context"
     "github.com/Mhoares/Sinoalice_Nightmare_Scheduler_BE/auth"
     "github.com/Mhoares/Sinoalice_Nightmare_Scheduler_BE/nightmare"
+    "github.com/Mhoares/Sinoalice_Nightmare_Scheduler_BE/rankings"
     "github.com/gin-gonic/gin"
     "github.com/spf13/viper"
     "net/http"
@@ -19,6 +20,7 @@ func main() {
 
     ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
     defer nightmare.Mongo.Client.Disconnect(ctx)
+    defer rankings.RankRepo.Client.Disconnect(ctx)
     defer cancel()
     auth := new(auth.Service)
     if  err := auth.Init(); err != nil{
@@ -28,7 +30,8 @@ func main() {
     sinoDB := new(nightmare.SinoaliceDBService)
     ns := new(nightmare.Service)
     ns.Init(nightmare.Mongo,sinoDB,auth)
-    gin.SetMode(gin.ReleaseMode)
+    rs := rankings.Service{Repo: rankings.RankRepo, Auth: auth}
+    //gin.SetMode(gin.ReleaseMode)
     r := gin.New()
     nightmares := r.Group("/nightmares")
     {
@@ -36,6 +39,13 @@ func main() {
         nightmares.POST("update", ns.UpdateNightmares())
         nightmares.OPTIONS("", preflight)
     }
+    rankings := r.Group("/rank")
+    {
+        rankings.GET("",rs.Get())
+        rankings.POST("update", rs.UpdateRanks())
+        rankings.OPTIONS("", preflight)
+    }
+
     viper.SetConfigFile("config.json")
     if err := viper.ReadInConfig(); err != nil{
         println(err.Error())
