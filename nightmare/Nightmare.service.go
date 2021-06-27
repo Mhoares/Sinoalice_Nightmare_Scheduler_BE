@@ -78,3 +78,29 @@ func (sn *Service) UpdateNightmares() func(ctx *gin.Context) {
 
 	}
 }
+type GetImageDataURL struct {
+	  Icon string `form:"icon"`
+}
+func (sn *Service) GetImageDataURL() func(ctx *gin.Context) {
+	return func(ctx *gin.Context) {
+		var (
+			gidURL GetImageDataURL
+			imgBase64 string
+		)
+		httpStatus := http.StatusOK
+		err := ctx.Bind(&gidURL)
+		if  err != nil{
+			httpStatus = http.StatusBadRequest
+			ctx.JSON(httpStatus, err.Error())
+			return
+		}
+		imgBase64, err = sn.SinoDB.GetImageDataUrl(gidURL.Icon)
+		if err != nil {
+			httpStatus = http.StatusServiceUnavailable
+			ctx.JSON(httpStatus, err.Error())
+			return
+		}
+		ctx.Writer.Header().Set("Access-Control-Allow-Origin", Origin)
+		ctx.JSON(httpStatus,imgBase64)
+	}
+}

@@ -36,6 +36,7 @@ func main() {
     nightmares := r.Group("/nightmares")
     {
         nightmares.GET("", ns.GetNightmares())
+        nightmares.GET("image",ns.GetImageDataURL())
         nightmares.POST("update", ns.UpdateNightmares())
         nightmares.OPTIONS("", preflight)
     }
