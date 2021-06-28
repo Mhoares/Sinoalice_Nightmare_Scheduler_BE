@@ -31,7 +31,7 @@ func main() {
     ns := new(nightmare.Service)
     ns.Init(nightmare.Mongo,sinoDB,auth)
     rs := rankings.Service{Repo: rankings.RankRepo, Auth: auth}
-    //gin.SetMode(gin.ReleaseMode)
+    gin.SetMode(gin.ReleaseMode)
     r := gin.New()
     nightmares := r.Group("/nightmares")
     {
