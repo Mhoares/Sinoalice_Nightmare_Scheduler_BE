@@ -2,6 +2,7 @@ package main
 
 import (
     "context"
+    "github.com/Mhoares/Sinoalice_Nightmare_Scheduler_BE/analyzer"
     "github.com/Mhoares/Sinoalice_Nightmare_Scheduler_BE/auth"
     "github.com/Mhoares/Sinoalice_Nightmare_Scheduler_BE/nightmare"
     "github.com/Mhoares/Sinoalice_Nightmare_Scheduler_BE/rankings"
@@ -21,6 +22,7 @@ func main() {
     ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
     defer nightmare.Mongo.Client.Disconnect(ctx)
     defer rankings.RankRepo.Client.Disconnect(ctx)
+    defer analyzer.WeaponRepo.Client.Disconnect(ctx)
     defer cancel()
     auth := new(auth.Service)
     if  err := auth.Init(); err != nil{
@@ -31,6 +33,7 @@ func main() {
     ns := new(nightmare.Service)
     ns.Init(nightmare.Mongo,sinoDB,auth)
     rs := rankings.Service{Repo: rankings.RankRepo, Auth: auth}
+    ws := analyzer.Service{Repo: analyzer.WeaponRepo, Auth: auth, Blue: analyzer.BlueServ}
     gin.SetMode(gin.ReleaseMode)
     r := gin.New()
     nightmares := r.Group("/nightmares")
@@ -46,7 +49,14 @@ func main() {
         rankings.POST("update", rs.UpdateRanks())
         rankings.OPTIONS("", preflight)
     }
-
+    weapons := r.Group("/weapon")
+    {
+        weapons.POST("update", ws.UpdateWeapons())
+        weapons.POST("update/supports", ws.UpdateSupportSkills())
+        weapons.GET("support_skill", ws.GetSupportSkillByName())
+        weapons.GET("", ws.GetWeapons())
+        weapons.OPTIONS("", preflight)
+    }
     viper.SetConfigFile("config.json")
     if err := viper.ReadInConfig(); err != nil{
         println(err.Error())
