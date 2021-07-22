@@ -50,6 +50,15 @@ func (mr *MongoRepository) SaveNightmares( nms []*Nightmare) error {
 	 for _ , nm := range nms {
 		if !exist.isSatisfiedBy(nm) {
 				tmp = append(tmp, nm)
+		}else{
+			c :=mr.Client.Database(Database ).Collection(Nightmares)
+			update := bson.M{
+				"$set": nm,
+			}
+			_, err :=c.UpdateOne(context.Background(),bson.D{{"_id", nm.ID}}, update)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	if len(tmp)> 0{
